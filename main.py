@@ -1,58 +1,55 @@
-from multiprocessing.dummy import active_children
 import random 
-import os
-
-asked_question = {}
-data_words = []
-topical_word = []
 
 class Game:
     def __init__(self):
         self.number_of_errors = 0
-        self.foto_name = 0
+        self.incorrect_letters = []
+        self.asked_question = {}
+        self.data_words = []
+        self.guessed_letters = []
+        self.topical_word = []
+
         for i in open(f"word.txt", 'r', encoding="utf-8"):   
             words = i.split('\n')
-            data_words.append(words[0])
-        self.main_word = data_words[random.randint(0, len(data_words) - 1)]
+            self.data_words.append(words[0])
+        self.main_word = self.data_words[random.randint(0, len(self.data_words) - 1)]
         for number, letters in enumerate(self.main_word):
-            print(f'{letters} -- {number}')
-            asked_question[number] = {letters: False}
+            self.asked_question[number] = {letters: False}
         
-
-
     def checking_question(self, user_ansver):
         "Проверка ответа"
-        print(asked_question)
-        for number, letters in asked_question.items():
-            print(letters)
-            for letter, enter in letters.items():
-                if user_ansver == letter:
-                    asked_question[number] = {letter: True}
-        word = []
-        for i in self.main_word:
-            word.append(i)
-        if user_ansver not in word:
-            self.number_of_errors += 1
+        if len(list(user_ansver)) == 1:
+            
 
-        print(asked_question)
+            for number, letters in self.asked_question.items():
+                for letter, enter in letters.items():
+                    if user_ansver == letter or user_ansver == 'й' and letter == 'и' or user_ansver == 'и' and letter == 'й' or user_ansver == 'е' and letter == 'ё' or user_ansver == 'ё' and letter == 'е':
+                        self.asked_question[number] = {letter: True}
+                        self.guessed_letters.append(user_ansver)
+
+            letters_in_correct_word = []
+            for i in self.main_word:
+                letters_in_correct_word.append(i)
+
+            if user_ansver not in letters_in_correct_word and user_ansver not in self.incorrect_letters:
+                self.incorrect_letters.append(user_ansver)
+                self.number_of_errors += 1
+
+        else:
+            return 'Введите букву !'
 
     def ask_question(self):
         "Задать вопрос"
-        topical_word.clear()
-        for number, letters in asked_question.items():
+        self.topical_word.clear()
+        for number, letters in self.asked_question.items():
             for letter, enter in letters.items():
                 if enter == False:
-                    topical_word.append('__')
+                    self.topical_word.append('__')
                 else:
-                    topical_word.append(letter)
-        full_word = ' '.join(topical_word)
+                    self.topical_word.append(letter)
+        full_word = ' '.join(self.topical_word)
         
-        print(f'Слово: {full_word}')
-
-
-    def output_result(self):
-        "Вывод результата"
-
+        return f'Слово: {full_word}'
 
 class Interface:
     def __init__(self, user):
@@ -62,22 +59,28 @@ class Interface:
         "Вывод результата"
         for i in open(f"foto/{user_1.number_of_errors}.txt", 'r', encoding="utf-8"):   
             print(i)
-
+        print(f'Ошибки ({len(self.user.incorrect_letters)}): {", ".join(self.user.incorrect_letters)}')
+        if len(list(user_1.main_word)) == len(user_1.guessed_letters):
+            print(f'Слово {user_1.main_word} отгаданно, вы выиграли ))')
+            exit()
+        
+    def ask_question_Interface(self):
+        result = self.user.ask_question()
+        print(result)
+    
+    def checking_question_Interface(self):
+        user_ansver = input('Введите следующую букву: ')
+        if self.user.checking_question(user_ansver) == 'Введите букву !':
+            print(self.user.checking_question(user_ansver))
+        number_attempts = 7 - user_1.number_of_errors 
+        print(f'Количество попыток: {number_attempts}')
 
 user_1 = Game()  
 console = Interface(user_1)
 
-
 loop = True
 while loop:
-    user_1.ask_question() 
-    user_ansver = input('Введите следующую букву: ')
-    user_1.checking_question(user_ansver)
+    console.ask_question_Interface() 
     console.output_result()
-    number_attempts = 7 - user_1.number_of_errors 
-    print(f'Количество попыток: {number_attempts}')
-    if user_1.number_of_errors == 7:
-        loop = False
-
-
+    console.checking_question_Interface()
 

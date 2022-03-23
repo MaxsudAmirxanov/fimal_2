@@ -2,12 +2,12 @@ import random
 
 class Game:
     def __init__(self):
-        self.number_of_errors = 0
+
         self.incorrect_letters = []
         self.asked_question = {}
         self.data_words = []
         self.guessed_letters = []
-        self.topical_word = []
+        self.actual_word = []
 
         for i in open(f"word.txt", 'r', encoding="utf-8"):   
             words = i.split('\n')
@@ -33,21 +33,21 @@ class Game:
 
             if user_ansver not in letters_in_correct_word and user_ansver not in self.incorrect_letters:
                 self.incorrect_letters.append(user_ansver)
-                self.number_of_errors += 1
+                
 
         else:
             return 'Введите букву !'
 
     def ask_question(self):
         "Задать вопрос"
-        self.topical_word.clear()
+        self.actual_word.clear()
         for number, letters in self.asked_question.items():
             for letter, enter in letters.items():
                 if enter == False:
-                    self.topical_word.append('__')
+                    self.actual_word.append('__')
                 else:
-                    self.topical_word.append(letter)
-        full_word = ' '.join(self.topical_word)
+                    self.actual_word.append(letter)
+        full_word = ' '.join(self.actual_word)
         
         return f'Слово: {full_word}'
 
@@ -57,7 +57,7 @@ class Interface:
 
     def output_result(self):
         "Вывод результата"
-        for i in open(f"foto/{user_1.number_of_errors}.txt", 'r', encoding="utf-8"):   
+        for i in open(f"foto/{len(self.user.incorrect_letters)}.txt", 'r', encoding="utf-8"):   
             print(i)
         print(f'Ошибки ({len(self.user.incorrect_letters)}): {", ".join(self.user.incorrect_letters)}')
         if len(list(user_1.main_word)) == len(user_1.guessed_letters):
@@ -72,7 +72,7 @@ class Interface:
         user_ansver = input('Введите следующую букву: ')
         if self.user.checking_question(user_ansver) == 'Введите букву !':
             print(self.user.checking_question(user_ansver))
-        number_attempts = 7 - user_1.number_of_errors 
+        number_attempts = 7 - len(user_1.incorrect_letters) 
         print(f'Количество попыток: {number_attempts}')
 
 user_1 = Game()  

@@ -11,7 +11,8 @@ asked_question = {
 # a = ['a', 'b', 'c']
 # # for i in a:
 # print(", ".join(a))
-
+import uuid
 data = 'привет'
 result = len(list(data))
-print(result)
+print(uuid.uuid1())
+

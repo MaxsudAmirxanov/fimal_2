@@ -8,7 +8,7 @@ class Game:
         self.data_words = []
         self.guessed_letters = []
         self.actual_word = []
-
+        self.main_word = self.data_words[random.randint(0, len(self.data_words) - 1)] 
     def reading_random_word(self):   
         "Чтеное рандомного слова"
         for i in open(f"word.txt", 'r', encoding="utf-8"):   
@@ -17,16 +17,30 @@ class Game:
 
     def create_dict_for_word(self):
         "Создание словарика"
-        self.main_word = self.data_words[random.randint(0, len(self.data_words) - 1)]
+        # main_word = self.data_words[random.randint(0, len(self.data_words) - 1)]
         for number, letters in enumerate(self.main_word):
             self.asked_question[number] = {letters: False}
-    
+
+
+    def checking_for_the_number_of_letters(self, user_ansver):
+        "Проверка слово, на количество букв"
+        if len(list(user_ansver)) == 1:
+            return True
+        else:
+            return False
+
+
+
+
+
+
     def checking_question(self, user_ansver):
         "Проверка ответа"
+        # main_word = self.create_dict_for_word()
         if len(list(user_ansver)) == 1:
             for number, letters in self.asked_question.items():
                 for letter, enter in letters.items():
-                    if user_ansver == letter or user_ansver == 'й' and letter == 'и' or user_ansver == 'и' and letter == 'й' or user_ansver == 'е' and letter == 'ё' or user_ansver == 'ё' and letter == 'е':
+                    if user_ansver == letter or user_ansver in 'йиеё': #and letter == 'и' or user_ansver == 'и' and letter == 'й' or user_ansver == 'е' and letter == 'ё' or user_ansver == 'ё' and letter == 'е':
                         self.asked_question[number] = {letter: True}
                         self.guessed_letters.append(user_ansver)
 
@@ -81,6 +95,8 @@ class Interface:
 
 user_1 = Game()  
 console = Interface(user_1)
+user_1.reading_random_word()
+user_1.create_dict_for_word()
 
 loop = True
 while loop:

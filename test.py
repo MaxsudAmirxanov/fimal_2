@@ -15,4 +15,9 @@ import uuid
 data = 'привет'
 result = len(list(data))
 print(uuid.uuid1())
+def test():
+    for i, b in enumerate(data):
+        print(b)
+        continue
 
+test()
